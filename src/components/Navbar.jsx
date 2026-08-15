@@ -1,143 +1,162 @@
 import React from 'react';
-import { Activity, Shield, Cpu, MapPin, Search, ArrowRight } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { 
+  Sun, 
+  Moon, 
+  MapPin, 
+  BarChart3, 
+  FileText, 
+  Bell, 
+  ShieldAlert,
+  Sparkles
+} from 'lucide-react';
 
-export default function Navbar({ onNavigate, activeTab, onSelectSegment, segments }) {
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [searchResults, setSearchResults] = React.useState([]);
-  const [showResults, setShowResults] = React.useState(false);
-
-  const handleSearch = (e) => {
-    const q = e.target.value;
-    setSearchQuery(q);
-    if (q.trim().length > 0) {
-      const filtered = segments.filter(
-        s => s.id.toLowerCase().includes(q.toLowerCase()) || 
-             s.name.toLowerCase().includes(q.toLowerCase()) ||
-             s.zone.toLowerCase().includes(q.toLowerCase())
-      );
-      setSearchResults(filtered);
-      setShowResults(true);
-    } else {
-      setShowResults(false);
-    }
-  };
+export const Navbar = ({ activeTab, setActiveTab, reportCount }) => {
+  const { darkMode, toggleTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-50 bg-[#080d1a]/90 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        
-        {/* Brand Logo & Tagline Badge */}
-        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onNavigate('hero')}>
-          <div className="w-9 h-9 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400 shadow-lg shadow-teal-500/10">
-            <Cpu className="w-5 h-5 animate-pulse" />
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-lg text-white tracking-tight">Road<span className="text-teal-400">Memory</span></span>
-              <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-teal-500/10 text-teal-300 border border-teal-500/20 rounded-full">
-                SIH 2026 Telemetry Node
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0B0F17]/85 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          
+          {/* Left: Brand Logo & Title */}
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-md shadow-blue-500/20">
+              <MapPin className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-medium">Predictive Infrastructure Intelligence Engine</p>
-          </div>
-        </div>
-
-        {/* Live Search Bar */}
-        <div className="relative hidden md:block w-72">
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearch}
-              onFocus={() => searchQuery && setShowResults(true)}
-              placeholder="Search Segment ID (e.g. R102-S3)..."
-              className="w-full bg-[#0e1726] border border-white/10 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 transition-all font-mono"
-            />
-          </div>
-
-          {/* Quick Search Dropdown */}
-          {showResults && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-[#0e1726] border border-white/15 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto divide-y divide-white/5">
-              {searchResults.map(s => (
-                <div
-                  key={s.id}
-                  onClick={() => {
-                    onSelectSegment(s);
-                    setShowResults(false);
-                    onNavigate('dashboard');
-                  }}
-                  className="p-2.5 hover:bg-white/5 cursor-pointer flex items-center justify-between text-xs"
-                >
-                  <div>
-                    <span className="font-mono text-teal-400 font-semibold">{s.id}</span>
-                    <p className="text-slate-300 truncate max-w-[180px]">{s.name}</p>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase ${
-                    s.riskTier === 'critical' ? 'badge-critical' :
-                    s.riskTier === 'high' ? 'badge-high' :
-                    s.riskTier === 'moderate' ? 'badge-moderate' : 'badge-low'
-                  }`}>
-                    {s.riskScore}/100
-                  </span>
-                </div>
-              ))}
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">
+                  Road<span className="text-blue-600 dark:text-blue-400">Memory</span>
+                </span>
+                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                  <Sparkles className="w-3 h-3 mr-1" /> AI Engine
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden md:block -mt-1 font-medium">
+                Infrastructure Damage & Prioritization Engine
+              </p>
             </div>
-          )}
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="hidden lg:flex items-center space-x-6 text-xs font-medium text-slate-300">
-          <button 
-            onClick={() => onNavigate('hero')}
-            className={`hover:text-white transition-colors ${activeTab === 'hero' ? 'text-teal-400 font-semibold' : ''}`}
-          >
-            Overview
-          </button>
-          <button 
-            onClick={() => onNavigate('different')}
-            className={`hover:text-white transition-colors ${activeTab === 'different' ? 'text-teal-400 font-semibold' : ''}`}
-          >
-            Predictive vs Reactive
-          </button>
-          <button 
-            onClick={() => onNavigate('memory')}
-            className={`hover:text-white transition-colors ${activeTab === 'memory' ? 'text-teal-400 font-semibold' : ''}`}
-          >
-            Asset Journey Paradox
-          </button>
-          <button 
-            onClick={() => onNavigate('dashboard')}
-            className={`hover:text-white transition-colors flex items-center space-x-1.5 ${activeTab === 'dashboard' ? 'text-teal-400 font-semibold' : ''}`}
-          >
-            <span className="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span>
-            <span>Live Console</span>
-          </button>
-          <button 
-            onClick={() => onNavigate('architecture')}
-            className={`hover:text-white transition-colors ${activeTab === 'architecture' ? 'text-teal-400 font-semibold' : ''}`}
-          >
-            Architecture
-          </button>
-        </nav>
-
-        {/* Action CTA */}
-        <div className="flex items-center space-x-3">
-          <div className="hidden sm:flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[11px] font-mono text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>SYSTEM LIVE</span>
           </div>
 
+          {/* Center: Navigation Links */}
+          <nav className="hidden md:flex items-center space-x-1 bg-slate-100/80 dark:bg-slate-900/60 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-800/50">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+                activeTab === 'dashboard'
+                  ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <MapPin className="w-4 h-4" />
+              <span>Dashboard</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('reports')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+                activeTab === 'reports'
+                  ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              <span>My Reports</span>
+              <span className="ml-1 px-1.5 py-0.5 text-xs font-bold rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                {reportCount}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+                activeTab === 'analytics'
+                  ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>City Analytics</span>
+            </button>
+          </nav>
+
+          {/* Right: Mode Toggle, Notifications & User Avatar */}
+          <div className="flex items-center space-x-3">
+            
+            {/* Light/Dark Toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle Light/Dark Theme"
+              className="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200/60 dark:border-slate-800"
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {darkMode ? (
+                <Sun className="w-5 h-5 text-amber-400" />
+              ) : (
+                <Moon className="w-5 h-5 text-slate-700" />
+              )}
+            </button>
+
+            {/* Notification Bell */}
+            <button 
+              className="relative p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200/60 dark:border-slate-800"
+              title="Notifications"
+            >
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500"></span>
+            </button>
+
+            {/* User Profile Avatar */}
+            <div className="flex items-center space-x-3 pl-2 border-l border-slate-200 dark:border-slate-800">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-800 to-slate-600 dark:from-blue-600 dark:to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                SK
+              </div>
+              <div className="hidden lg:block text-left">
+                <p className="text-xs font-semibold text-slate-900 dark:text-slate-100 leading-tight">Shubham Kundu</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">Citizen Inspector</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Mobile Tab Bar */}
+        <div className="flex md:hidden items-center justify-around py-2 border-t border-slate-200/60 dark:border-slate-800/60">
           <button
-            onClick={() => onNavigate('dashboard')}
-            className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs transition-all duration-200 shadow-lg shadow-teal-500/20 flex items-center space-x-2"
+            onClick={() => setActiveTab('dashboard')}
+            className={`flex flex-col items-center text-xs font-medium ${
+              activeTab === 'dashboard' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500'
+            }`}
           >
-            <span>View Live Dashboard</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <MapPin className="w-5 h-5" />
+            <span>Dashboard</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('reports')}
+            className={`flex flex-col items-center text-xs font-medium ${
+              activeTab === 'reports' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500'
+            }`}
+          >
+            <FileText className="w-5 h-5" />
+            <span>Reports ({reportCount})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('analytics')}
+            className={`flex flex-col items-center text-xs font-medium ${
+              activeTab === 'analytics' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500'
+            }`}
+          >
+            <BarChart3 className="w-5 h-5" />
+            <span>Analytics</span>
           </button>
         </div>
 
       </div>
     </header>
   );
-}
+};
